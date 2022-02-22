@@ -14,9 +14,9 @@
 
 package com.saasovation.common.notification;
 
-import java.io.Serializable;
-
 import com.saasovation.common.AssertionConcern;
+
+import java.io.Serializable;
 
 public class PublishedNotificationTracker extends AssertionConcern implements Serializable {
 
@@ -35,8 +35,8 @@ public class PublishedNotificationTracker extends AssertionConcern implements Se
 
     public void failWhenConcurrencyViolation(int aVersion) {
         this.assertStateTrue(
-                aVersion == this.concurrencyVersion(),
-                "Concurrency Violation: Stale data detected. Entity was already modified.");
+            aVersion == this.concurrencyVersion(),
+            "Concurrency Violation: Stale data detected. Entity was already modified.");
     }
 
     public long mostRecentPublishedNotificationId() {
@@ -63,8 +63,8 @@ public class PublishedNotificationTracker extends AssertionConcern implements Se
             PublishedNotificationTracker typedObject = (PublishedNotificationTracker) anObject;
             equalObjects =
                 this.publishedNotificationTrackerId() == typedObject.publishedNotificationTrackerId() &&
-                this.typeName().equals(typedObject.typeName()) &&
-                this.mostRecentPublishedNotificationId() == typedObject.mostRecentPublishedNotificationId();
+                    this.typeName().equals(typedObject.typeName()) &&
+                    this.mostRecentPublishedNotificationId() == typedObject.mostRecentPublishedNotificationId();
         }
 
         return equalObjects;
@@ -73,10 +73,10 @@ public class PublishedNotificationTracker extends AssertionConcern implements Se
     @Override
     public int hashCode() {
         int hashCodeValue =
-            + (11575 * 241)
-            + (int) this.publishedNotificationTrackerId()
-            + (int) this.mostRecentPublishedNotificationId()
-            + this.typeName().hashCode();
+            +(11575 * 241)
+                + (int) this.publishedNotificationTrackerId()
+                + (int) this.mostRecentPublishedNotificationId()
+                + this.typeName().hashCode();
 
         return hashCodeValue;
     }
@@ -84,7 +84,7 @@ public class PublishedNotificationTracker extends AssertionConcern implements Se
     @Override
     public String toString() {
         return "PublishedNotificationTracker [mostRecentPublishedNotificationId=" + mostRecentPublishedNotificationId
-                + ", publishedNotificationTrackerId=" + publishedNotificationTrackerId + ", typeName=" + typeName + "]";
+            + ", publishedNotificationTrackerId=" + publishedNotificationTrackerId + ", typeName=" + typeName + "]";
     }
 
     protected PublishedNotificationTracker() {

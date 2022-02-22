@@ -14,21 +14,17 @@
 
 package com.saasovation.common.port.adapter.notification;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.saasovation.common.domain.model.DomainEvent;
 import com.saasovation.common.event.EventStore;
 import com.saasovation.common.event.StoredEvent;
-import com.saasovation.common.notification.Notification;
-import com.saasovation.common.notification.NotificationPublisher;
-import com.saasovation.common.notification.NotificationSerializer;
-import com.saasovation.common.notification.PublishedNotificationTracker;
-import com.saasovation.common.notification.PublishedNotificationTrackerStore;
+import com.saasovation.common.notification.*;
 import com.saasovation.common.port.adapter.messaging.rabbitmq.ConnectionSettings;
 import com.saasovation.common.port.adapter.messaging.rabbitmq.Exchange;
 import com.saasovation.common.port.adapter.messaging.rabbitmq.MessageParameters;
 import com.saasovation.common.port.adapter.messaging.rabbitmq.MessageProducer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RabbitMQNotificationPublisher implements NotificationPublisher {
 
@@ -38,9 +34,9 @@ public class RabbitMQNotificationPublisher implements NotificationPublisher {
     private PublishedNotificationTrackerStore publishedNotificationTrackerStore;
 
     public RabbitMQNotificationPublisher(
-            EventStore anEventStore,
-            PublishedNotificationTrackerStore aPublishedNotificationTrackerStore,
-            Object aMessagingLocator) {
+        EventStore anEventStore,
+        PublishedNotificationTrackerStore aPublishedNotificationTrackerStore,
+        Object aMessagingLocator) {
 
         super();
 
@@ -52,11 +48,11 @@ public class RabbitMQNotificationPublisher implements NotificationPublisher {
     @Override
     public void publishNotifications() {
         PublishedNotificationTracker publishedNotificationTracker =
-                this.publishedNotificationTrackerStore().publishedNotificationTracker();
+            this.publishedNotificationTrackerStore().publishedNotificationTracker();
 
         List<Notification> notifications =
             this.listUnpublishedNotifications(
-                    publishedNotificationTracker.mostRecentPublishedNotificationId());
+                publishedNotificationTracker.mostRecentPublishedNotificationId());
 
         MessageProducer messageProducer = this.messageProducer();
 
@@ -96,7 +92,7 @@ public class RabbitMQNotificationPublisher implements NotificationPublisher {
     }
 
     private List<Notification> listUnpublishedNotifications(
-            long aMostRecentPublishedMessageId) {
+        long aMostRecentPublishedMessageId) {
         List<StoredEvent> storedEvents =
             this.eventStore().allStoredEventsSince(aMostRecentPublishedMessageId);
 
@@ -111,9 +107,9 @@ public class RabbitMQNotificationPublisher implements NotificationPublisher {
         // creates my exchange if non-existing
         Exchange exchange =
             Exchange.fanOutInstance(
-                    ConnectionSettings.instance(),
-                    this.exchangeName(),
-                    true);
+                ConnectionSettings.instance(),
+                this.exchangeName(),
+                true);
 
         // create a message producer used to forward events
         MessageProducer messageProducer = MessageProducer.instance(exchange);
@@ -122,14 +118,12 @@ public class RabbitMQNotificationPublisher implements NotificationPublisher {
     }
 
     private List<Notification> notificationsFrom(List<StoredEvent> aStoredEvents) {
-        List<Notification> notifications =
-            new ArrayList<Notification>(aStoredEvents.size());
+        List<Notification> notifications = new ArrayList<>(aStoredEvents.size());
 
         for (StoredEvent storedEvent : aStoredEvents) {
             DomainEvent domainEvent = storedEvent.toDomainEvent();
 
-            Notification notification =
-                new Notification(storedEvent.eventId(), domainEvent);
+            Notification notification = new Notification(storedEvent.eventId(), domainEvent);
 
             notifications.add(notification);
         }
@@ -138,14 +132,14 @@ public class RabbitMQNotificationPublisher implements NotificationPublisher {
     }
 
     private void publish(
-            Notification aNotification,
-            MessageProducer aMessageProducer) {
+        Notification aNotification,
+        MessageProducer aMessageProducer) {
 
         MessageParameters messageParameters =
             MessageParameters.durableTextParameters(
-                    aNotification.typeName(),
-                    Long.toString(aNotification.notificationId()),
-                    aNotification.occurredOn());
+                aNotification.typeName(),
+                Long.toString(aNotification.notificationId()),
+                aNotification.occurredOn());
 
         String notification =
             NotificationSerializer
