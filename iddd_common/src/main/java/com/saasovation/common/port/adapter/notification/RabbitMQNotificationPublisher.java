@@ -126,9 +126,7 @@ public class RabbitMQNotificationPublisher implements NotificationPublisher {
         return notifications;
     }
 
-    private void publish(
-        Notification aNotification,
-        MessageProducer aMessageProducer) {
+    private void publish(Notification aNotification, MessageProducer aMessageProducer) {
 
         MessageParameters messageParameters =
             MessageParameters.durableTextParameters(

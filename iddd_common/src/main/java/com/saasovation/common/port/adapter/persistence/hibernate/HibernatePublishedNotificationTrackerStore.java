@@ -14,14 +14,13 @@
 
 package com.saasovation.common.port.adapter.persistence.hibernate;
 
-import java.util.List;
-
-import org.hibernate.Query;
-
 import com.saasovation.common.notification.Notification;
 import com.saasovation.common.notification.PublishedNotificationTracker;
 import com.saasovation.common.notification.PublishedNotificationTrackerStore;
 import com.saasovation.common.persistence.PersistenceManagerProvider;
+import org.hibernate.Query;
+
+import java.util.List;
 
 public class HibernatePublishedNotificationTrackerStore
     extends AbstractHibernateSession
@@ -30,8 +29,8 @@ public class HibernatePublishedNotificationTrackerStore
     private String typeName;
 
     public HibernatePublishedNotificationTrackerStore(
-            PersistenceManagerProvider aPersistenceManagerProvider,
-            String aPublishedNotificationTrackerType) {
+        PersistenceManagerProvider aPersistenceManagerProvider,
+        String aPublishedNotificationTrackerType) {
         this();
 
         if (!aPersistenceManagerProvider.hasHibernateSession()) {
@@ -54,9 +53,9 @@ public class HibernatePublishedNotificationTrackerStore
     @Override
     public PublishedNotificationTracker publishedNotificationTracker(String aTypeName) {
         Query query =
-                this.session().createQuery(
-                        "from PublishedNotificationTracker as pnt "
-                        + "where pnt.typeName = ?");
+            this.session().createQuery(
+                "from PublishedNotificationTracker as pnt "
+                    + "where pnt.typeName = ?");
 
         query.setParameter(0, aTypeName);
 
@@ -64,14 +63,14 @@ public class HibernatePublishedNotificationTrackerStore
 
         try {
             publishedNotificationTracker =
-                    (PublishedNotificationTracker) query.uniqueResult();
+                (PublishedNotificationTracker) query.uniqueResult();
         } catch (Exception e) {
             // fall through
         }
 
         if (publishedNotificationTracker == null) {
             publishedNotificationTracker =
-                    new PublishedNotificationTracker(this.typeName());
+                new PublishedNotificationTracker(this.typeName());
         }
 
         return publishedNotificationTracker;
@@ -79,8 +78,8 @@ public class HibernatePublishedNotificationTrackerStore
 
     @Override
     public void trackMostRecentPublishedNotification(
-            PublishedNotificationTracker aPublishedNotificationTracker,
-            List<Notification> aNotifications) {
+        PublishedNotificationTracker aPublishedNotificationTracker,
+        List<Notification> aNotifications) {
         int lastIndex = aNotifications.size() - 1;
 
         if (lastIndex >= 0) {
