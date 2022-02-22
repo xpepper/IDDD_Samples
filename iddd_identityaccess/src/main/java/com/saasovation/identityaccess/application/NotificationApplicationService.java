@@ -14,14 +14,13 @@
 
 package com.saasovation.identityaccess.application;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.saasovation.common.event.EventStore;
 import com.saasovation.common.notification.NotificationLog;
 import com.saasovation.common.notification.NotificationLogFactory;
 import com.saasovation.common.notification.NotificationLogId;
 import com.saasovation.common.notification.NotificationPublisher;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 public class NotificationApplicationService {
 
@@ -35,30 +34,30 @@ public class NotificationApplicationService {
         super();
     }
 
-    @Transactional(readOnly=true)
+    @Transactional(readOnly = true)
     public NotificationLog currentNotificationLog() {
-        NotificationLogFactory factory = new NotificationLogFactory(this.eventStore());
+        NotificationLogFactory factory = new NotificationLogFactory(eventStore());
 
         return factory.createCurrentNotificationLog();
     }
 
-    @Transactional(readOnly=true)
+    @Transactional(readOnly = true)
     public NotificationLog notificationLog(String aNotificationLogId) {
-        NotificationLogFactory factory = new NotificationLogFactory(this.eventStore());
+        NotificationLogFactory factory = new NotificationLogFactory(eventStore());
 
         return factory.createNotificationLog(new NotificationLogId(aNotificationLogId));
     }
 
     @Transactional
     public void publishNotifications() {
-        this.notificationPublisher().publishNotifications();
+        notificationPublisher().publishNotifications();
     }
 
     protected EventStore eventStore() {
-        return this.eventStore;
+        return eventStore;
     }
 
     protected NotificationPublisher notificationPublisher() {
-        return this.notificationPublisher;
+        return notificationPublisher;
     }
 }
