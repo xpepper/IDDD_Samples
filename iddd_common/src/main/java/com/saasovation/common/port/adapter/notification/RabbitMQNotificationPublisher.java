@@ -40,28 +40,28 @@ public class RabbitMQNotificationPublisher implements NotificationPublisher {
 
         super();
 
-        this.setEventStore(anEventStore);
-        this.setExchangeName((String) aMessagingLocator);
-        this.setPublishedNotificationTrackerStore(aPublishedNotificationTrackerStore);
+        setEventStore(anEventStore);
+        setExchangeName((String) aMessagingLocator);
+        setPublishedNotificationTrackerStore(aPublishedNotificationTrackerStore);
     }
 
     @Override
     public void publishNotifications() {
         PublishedNotificationTracker publishedNotificationTracker =
-            this.publishedNotificationTrackerStore().publishedNotificationTracker();
+            publishedNotificationTrackerStore().publishedNotificationTracker();
 
         List<Notification> notifications =
-            this.listUnpublishedNotifications(
+            listUnpublishedNotifications(
                 publishedNotificationTracker.mostRecentPublishedNotificationId());
 
-        MessageProducer messageProducer = this.messageProducer();
+        MessageProducer messageProducer = messageProducer();
 
         try {
             for (Notification notification : notifications) {
-                this.publish(notification, messageProducer);
+                publish(notification, messageProducer);
             }
 
-            this.publishedNotificationTrackerStore()
+            publishedNotificationTrackerStore()
                 .trackMostRecentPublishedNotification(
                     publishedNotificationTracker,
                     notifications);
@@ -76,30 +76,25 @@ public class RabbitMQNotificationPublisher implements NotificationPublisher {
     }
 
     private EventStore eventStore() {
-        return this.eventStore;
+        return eventStore;
     }
 
     private void setEventStore(EventStore anEventStore) {
-        this.eventStore = anEventStore;
+        eventStore = anEventStore;
     }
 
     private String exchangeName() {
-        return this.exchangeName;
+        return exchangeName;
     }
 
     private void setExchangeName(String anExchangeName) {
-        this.exchangeName = anExchangeName;
+        exchangeName = anExchangeName;
     }
 
-    private List<Notification> listUnpublishedNotifications(
-        long aMostRecentPublishedMessageId) {
-        List<StoredEvent> storedEvents =
-            this.eventStore().allStoredEventsSince(aMostRecentPublishedMessageId);
+    private List<Notification> listUnpublishedNotifications(long aMostRecentPublishedMessageId) {
+        List<StoredEvent> storedEvents = eventStore().allStoredEventsSince(aMostRecentPublishedMessageId);
 
-        List<Notification> notifications =
-            this.notificationsFrom(storedEvents);
-
-        return notifications;
+        return notificationsFrom(storedEvents);
     }
 
     private MessageProducer messageProducer() {
@@ -108,7 +103,7 @@ public class RabbitMQNotificationPublisher implements NotificationPublisher {
         Exchange exchange =
             Exchange.fanOutInstance(
                 ConnectionSettings.instance(),
-                this.exchangeName(),
+                exchangeName(),
                 true);
 
         // create a message producer used to forward events
