@@ -14,12 +14,11 @@
 
 package com.saasovation.common.notification;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.saasovation.common.domain.model.DomainEvent;
 import com.saasovation.common.event.EventStore;
 import com.saasovation.common.event.StoredEvent;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class NotificationLogFactory {
 
@@ -39,22 +38,20 @@ public class NotificationLogFactory {
     }
 
     public NotificationLog createCurrentNotificationLog() {
-        return this.createNotificationLog(
-                this.calculateCurrentNotificationLogId(eventStore));
+        return createNotificationLog(calculateCurrentNotificationLogId(eventStore));
     }
 
-    public NotificationLog createNotificationLog(
-            NotificationLogId aNotificationLogId) {
+    public NotificationLog createNotificationLog(NotificationLogId aNotificationLogId) {
 
-        long count = this.eventStore().countStoredEvents();
+        long count = eventStore().countStoredEvents();
 
         NotificationLogInfo info = new NotificationLogInfo(aNotificationLogId, count);
 
-        return this.createNotificationLog(info);
+        return createNotificationLog(info);
     }
 
     private NotificationLogInfo calculateCurrentNotificationLogId(
-            EventStore anEventStore) {
+        EventStore anEventStore) {
 
         long count = anEventStore.countStoredEvents();
 
@@ -74,48 +71,38 @@ public class NotificationLogFactory {
     }
 
     private NotificationLog createNotificationLog(
-            NotificationLogInfo aNotificationLogInfo) {
+        NotificationLogInfo aNotificationLogInfo) {
 
         List<StoredEvent> storedEvents =
-            this.eventStore().allStoredEventsBetween(
-                    aNotificationLogInfo.notificationLogId().low(),
-                    aNotificationLogInfo.notificationLogId().high());
+            eventStore().allStoredEventsBetween(
+                aNotificationLogInfo.notificationLogId().low(),
+                aNotificationLogInfo.notificationLogId().high());
 
         boolean archivedIndicator =
-                aNotificationLogInfo.notificationLogId().high() < aNotificationLogInfo.totalLogged();
+            aNotificationLogInfo.notificationLogId().high() < aNotificationLogInfo.totalLogged();
 
         NotificationLogId next = archivedIndicator ?
-                aNotificationLogInfo.notificationLogId().next(NOTIFICATIONS_PER_LOG) :
-                null;
+            aNotificationLogInfo.notificationLogId().next(NOTIFICATIONS_PER_LOG) :
+            null;
 
         NotificationLogId previous =
-                aNotificationLogInfo.notificationLogId().previous(NOTIFICATIONS_PER_LOG);
+            aNotificationLogInfo.notificationLogId().previous(NOTIFICATIONS_PER_LOG);
 
         NotificationLog notificationLog =
             new NotificationLog(
-                    aNotificationLogInfo.notificationLogId().encoded(),
-                    NotificationLogId.encoded(next),
-                    NotificationLogId.encoded(previous),
-                    this.notificationsFrom(storedEvents),
-                    archivedIndicator);
+                aNotificationLogInfo.notificationLogId().encoded(),
+                NotificationLogId.encoded(next),
+                NotificationLogId.encoded(previous),
+                notificationsFrom(storedEvents),
+                archivedIndicator);
 
         return notificationLog;
     }
 
-    private List<Notification> notificationsFrom(List<StoredEvent> aStoredEvents) {
-        List<Notification> notifications =
-            new ArrayList<Notification>(aStoredEvents.size());
-
-        for (StoredEvent storedEvent : aStoredEvents) {
-            DomainEvent domainEvent = storedEvent.toDomainEvent();
-
-            Notification notification =
-                new Notification(storedEvent.eventId(), domainEvent);
-
-            notifications.add(notification);
-        }
-
-        return notifications;
+    private List<Notification> notificationsFrom(List<StoredEvent> storedEvents) {
+        return storedEvents.stream()
+            .map(each -> new Notification(each.eventId(), each.toDomainEvent()))
+            .collect(Collectors.toList());
     }
 
     private EventStore eventStore() {
