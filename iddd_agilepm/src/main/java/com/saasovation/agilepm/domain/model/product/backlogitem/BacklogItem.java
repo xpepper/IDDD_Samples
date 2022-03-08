@@ -1,22 +1,4 @@
-//   Copyright 2012,2013 Vaughn Vernon
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//       http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
-
 package com.saasovation.agilepm.domain.model.product.backlogitem;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 import com.saasovation.agilepm.domain.model.Entity;
 import com.saasovation.agilepm.domain.model.discussion.DiscussionAvailability;
@@ -29,6 +11,10 @@ import com.saasovation.agilepm.domain.model.product.sprint.SprintId;
 import com.saasovation.agilepm.domain.model.team.TeamMember;
 import com.saasovation.agilepm.domain.model.tenant.TenantId;
 import com.saasovation.common.domain.model.DomainEventPublisher;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public class BacklogItem extends Entity {
 
@@ -50,22 +36,22 @@ public class BacklogItem extends Entity {
     private BacklogItemType type;
 
     public BacklogItem(
-            TenantId aTenantId,
-            ProductId aProductId,
-            BacklogItemId aBacklogItemId,
-            String aSummary,
-            String aCategory,
-            BacklogItemType aType,
-            BacklogItemStatus aStatus,
-            StoryPoints aStoryPoints) {
+        TenantId aTenantId,
+        ProductId aProductId,
+        BacklogItemId aBacklogItemId,
+        String aSummary,
+        String aCategory,
+        BacklogItemType aType,
+        BacklogItemStatus aStatus,
+        StoryPoints aStoryPoints) {
 
         this();
 
         this.setBacklogItemId(aBacklogItemId);
         this.setCategory(aCategory);
         this.setDiscussion(
-                BacklogItemDiscussion
-                    .fromAvailability(DiscussionAvailability.NOT_REQUESTED));
+            BacklogItemDiscussion
+                .fromAvailability(DiscussionAvailability.NOT_REQUESTED));
         this.setProductId(aProductId);
         this.setStatus(aStatus);
         this.setStoryPoints(aStoryPoints);
@@ -98,9 +84,9 @@ public class BacklogItem extends Entity {
         DomainEventPublisher
             .instance()
             .publish(new BusinessPriorityAssigned(
-                    this.tenantId(),
-                    this.backlogItemId(),
-                    this.businessPriority()));
+                this.tenantId(),
+                this.backlogItemId(),
+                this.businessPriority()));
     }
 
     public void assignStoryPoints(StoryPoints aStoryPoints) {
@@ -109,9 +95,9 @@ public class BacklogItem extends Entity {
         DomainEventPublisher
             .instance()
             .publish(new BacklogItemStoryPointsAssigned(
-                    this.tenantId(),
-                    this.backlogItemId(),
-                    this.storyPoints()));
+                this.tenantId(),
+                this.backlogItemId(),
+                this.storyPoints()));
     }
 
     public void assignTaskVolunteer(TaskId aTaskId, TeamMember aVolunteer) {
@@ -142,9 +128,9 @@ public class BacklogItem extends Entity {
         DomainEventPublisher
             .instance()
             .publish(new BacklogItemCategoryChanged(
-                    this.tenantId(),
-                    this.backlogItemId(),
-                    this.category()));
+                this.tenantId(),
+                this.backlogItemId(),
+                this.category()));
     }
 
     public void changeTaskStatus(TaskId aTaskId, TaskStatus aStatus) {
@@ -163,9 +149,9 @@ public class BacklogItem extends Entity {
         DomainEventPublisher
             .instance()
             .publish(new BacklogItemTypeChanged(
-                    this.tenantId(),
-                    this.backlogItemId(),
-                    this.type()));
+                this.tenantId(),
+                this.backlogItemId(),
+                this.type()));
     }
 
     public void commitTo(Sprint aSprint) {
@@ -190,34 +176,34 @@ public class BacklogItem extends Entity {
         DomainEventPublisher
             .instance()
             .publish(new BacklogItemCommitted(
-                    this.tenantId(),
-                    this.backlogItemId(),
-                    this.sprintId()));
+                this.tenantId(),
+                this.backlogItemId(),
+                this.sprintId()));
     }
 
     public void defineTask(TeamMember aVolunteer, String aName, String aDescription, int anHoursRemaining) {
         Task task = new Task(
-                this.tenantId(),
-                this.backlogItemId(),
-                new TaskId(),
-                aVolunteer,
-                aName,
-                aDescription,
-                anHoursRemaining,
-                TaskStatus.NOT_STARTED);
+            this.tenantId(),
+            this.backlogItemId(),
+            new TaskId(),
+            aVolunteer,
+            aName,
+            aDescription,
+            anHoursRemaining,
+            TaskStatus.NOT_STARTED);
 
         this.tasks().add(task);
 
         DomainEventPublisher
             .instance()
             .publish(new TaskDefined(
-                    this.tenantId(),
-                    this.backlogItemId(),
-                    task.taskId(),
-                    aVolunteer.username(),
-                    aName,
-                    aDescription,
-                    anHoursRemaining));
+                this.tenantId(),
+                this.backlogItemId(),
+                task.taskId(),
+                aVolunteer.username(),
+                aName,
+                aDescription,
+                anHoursRemaining));
     }
 
     public void describeTask(TaskId aTaskId, String aDescription) {
@@ -242,8 +228,8 @@ public class BacklogItem extends Entity {
         if (!this.discussion().availability().isReady()) {
             this.setDiscussionInitiationId(null);
             this.setDiscussion(
-                    BacklogItemDiscussion
-                        .fromAvailability(DiscussionAvailability.FAILED));
+                BacklogItemDiscussion
+                    .fromAvailability(DiscussionAvailability.FAILED));
         }
     }
 
@@ -258,9 +244,9 @@ public class BacklogItem extends Entity {
             DomainEventPublisher
                 .instance()
                 .publish(new BacklogItemDiscussionInitiated(
-                        this.tenantId(),
-                        this.backlogItemId(),
-                        this.discussion()));
+                    this.tenantId(),
+                    this.backlogItemId(),
+                    this.discussion()));
         }
     }
 
@@ -297,9 +283,9 @@ public class BacklogItem extends Entity {
             DomainEventPublisher
                 .instance()
                 .publish(new BacklogItemStatusChanged(
-                        this.tenantId(),
-                        this.backlogItemId(),
-                        changedStatus));
+                    this.tenantId(),
+                    this.backlogItemId(),
+                    changedStatus));
         }
     }
 
@@ -313,9 +299,9 @@ public class BacklogItem extends Entity {
         DomainEventPublisher
             .instance()
             .publish(new BacklogItemDiscussionInitiated(
-                    this.tenantId(),
-                    this.backlogItemId(),
-                    this.discussion()));
+                this.tenantId(),
+                this.backlogItemId(),
+                this.discussion()));
     }
 
     public boolean isCommittedToSprint() {
@@ -357,8 +343,8 @@ public class BacklogItem extends Entity {
         DomainEventPublisher
             .instance()
             .publish(new BacklogItemMarkedAsRemoved(
-                    this.tenantId(),
-                    this.backlogItemId()));
+                this.tenantId(),
+                this.backlogItemId()));
     }
 
     public ProductId productId() {
@@ -383,9 +369,9 @@ public class BacklogItem extends Entity {
         DomainEventPublisher
             .instance()
             .publish(new TaskRemoved(
-                    this.tenantId(),
-                    this.backlogItemId(),
-                    aTaskId));
+                this.tenantId(),
+                this.backlogItemId(),
+                aTaskId));
     }
 
     public void renameTask(TaskId aTaskId, String aName) {
@@ -401,16 +387,16 @@ public class BacklogItem extends Entity {
     public void requestDiscussion(DiscussionAvailability aDiscussionAvailability) {
         if (!this.discussion().availability().isReady()) {
             this.setDiscussion(
-                    BacklogItemDiscussion.fromAvailability(
-                            aDiscussionAvailability));
+                BacklogItemDiscussion.fromAvailability(
+                    aDiscussionAvailability));
 
             DomainEventPublisher
                 .instance()
                 .publish(new BacklogItemDiscussionRequested(
-                        this.tenantId(),
-                        this.productId(),
-                        this.backlogItemId(),
-                        this.discussion().availability().isRequested()));
+                    this.tenantId(),
+                    this.productId(),
+                    this.backlogItemId(),
+                    this.discussion().availability().isRequested()));
         }
     }
 
@@ -434,9 +420,9 @@ public class BacklogItem extends Entity {
         DomainEventPublisher
             .instance()
             .publish(new BacklogItemScheduled(
-                    this.tenantId(),
-                    this.backlogItemId(),
-                    this.releaseId()));
+                this.tenantId(),
+                this.backlogItemId(),
+                this.releaseId()));
     }
 
     public SprintId sprintId() {
@@ -467,9 +453,9 @@ public class BacklogItem extends Entity {
         DomainEventPublisher
             .instance()
             .publish(new BacklogItemSummarized(
-                    this.tenantId(),
-                    this.backlogItemId(),
-                    this.summary()));
+                this.tenantId(),
+                this.backlogItemId(),
+                this.summary()));
     }
 
     public Task task(TaskId aTaskId) {
@@ -488,9 +474,9 @@ public class BacklogItem extends Entity {
         DomainEventPublisher
             .instance()
             .publish(new BacklogItemStoryTold(
-                    this.tenantId(),
-                    this.backlogItemId(),
-                    this.story()));
+                this.tenantId(),
+                this.backlogItemId(),
+                this.story()));
     }
 
     public TenantId tenantId() {
@@ -523,9 +509,9 @@ public class BacklogItem extends Entity {
         DomainEventPublisher
             .instance()
             .publish(new BacklogItemUncommitted(
-                    this.tenantId(),
-                    this.backlogItemId(),
-                    uncommittedSprintId));
+                this.tenantId(),
+                this.backlogItemId(),
+                uncommittedSprintId));
     }
 
     public void unscheduleFromRelease() {
@@ -543,9 +529,9 @@ public class BacklogItem extends Entity {
         DomainEventPublisher
             .instance()
             .publish(new BacklogItemUnscheduled(
-                    this.tenantId(),
-                    this.backlogItemId(),
-                    unscheduledReleaseId));
+                this.tenantId(),
+                this.backlogItemId(),
+                unscheduledReleaseId));
     }
 
     @Override
@@ -556,8 +542,8 @@ public class BacklogItem extends Entity {
             BacklogItem typedObject = (BacklogItem) anObject;
             equalObjects =
                 this.tenantId().equals(typedObject.tenantId()) &&
-                this.productId().equals(typedObject.productId()) &&
-                this.backlogItemId().equals(typedObject.backlogItemId());
+                    this.productId().equals(typedObject.productId()) &&
+                    this.backlogItemId().equals(typedObject.backlogItemId());
         }
 
         return equalObjects;
@@ -566,10 +552,10 @@ public class BacklogItem extends Entity {
     @Override
     public int hashCode() {
         int hashCodeValue =
-            + (34685 * 7)
-            + this.tenantId().hashCode()
-            + this.productId().hashCode()
-            + this.backlogItemId().hashCode();
+            +(34685 * 7)
+                + this.tenantId().hashCode()
+                + this.productId().hashCode()
+                + this.backlogItemId().hashCode();
 
         return hashCodeValue;
     }
@@ -577,13 +563,13 @@ public class BacklogItem extends Entity {
     @Override
     public String toString() {
         return "BacklogItem [tenantId=" + tenantId + ", productId=" + productId
-                + ", backlogItemId=" + backlogItemId
-                + ", businessPriority=" + businessPriority
-                + ", category=" + category + ", discussion=" + discussion
-                + ", releaseId=" + releaseId + ", sprintId=" + sprintId
-                + ", status=" + status + ", story=" + story
-                + ", storyPoints=" + storyPoints + ", summary=" + summary
-                + ", tasks=" + tasks + ", type=" + type + "]";
+            + ", backlogItemId=" + backlogItemId
+            + ", businessPriority=" + businessPriority
+            + ", category=" + category + ", discussion=" + discussion
+            + ", releaseId=" + releaseId + ", sprintId=" + sprintId
+            + ", status=" + status + ", story=" + story
+            + ", storyPoints=" + storyPoints + ", summary=" + summary
+            + ", tasks=" + tasks + ", type=" + type + "]";
     }
 
     private BacklogItem() {
@@ -616,9 +602,9 @@ public class BacklogItem extends Entity {
     private void setDiscussionInitiationId(String aDiscussionInitiationId) {
         if (aDiscussionInitiationId != null) {
             this.assertArgumentLength(
-                    aDiscussionInitiationId,
-                    100,
-                    "Discussion initiation identity must be 100 characters or less.");
+                aDiscussionInitiationId,
+                100,
+                "Discussion initiation identity must be 100 characters or less.");
         }
 
         this.discussionInitiationId = aDiscussionInitiationId;
