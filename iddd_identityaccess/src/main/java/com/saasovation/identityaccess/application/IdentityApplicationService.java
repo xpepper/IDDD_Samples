@@ -388,9 +388,7 @@ public class IdentityApplicationService {
         return groupRepository;
     }
 
-    private void internalChangeUserContactInformation(
-        User aUser,
-        ContactInformation aContactInformation) {
+    private void internalChangeUserContactInformation(User aUser, ContactInformation aContactInformation) {
 
         if (aUser == null) {
             throw new IllegalArgumentException("User must exist.");
